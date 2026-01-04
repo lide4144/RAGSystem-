@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Cpu, Database, Key, Save, RefreshCw, Eye, EyeOff, Server, CheckCircle2, AlertCircle, Zap, Box, ShieldCheck, Globe, Link } from 'lucide-react';
+import { User, Cpu, Database, Key, Save, RefreshCw, Eye, EyeOff, CheckCircle2, AlertCircle, Box, Globe, Link } from 'lucide-react';
 
 type SettingsTab = 'account' | 'llm' | 'rag';
 
@@ -12,7 +12,6 @@ interface ModelOption {
 interface ProviderConfig {
   id: string;
   name: string;
-  icon: string;
   defaultBaseUrl: string;
   defaultModels: ModelOption[]; // Fallback or preset models
 }
@@ -22,7 +21,6 @@ const PROVIDERS: ProviderConfig[] = [
   {
     id: 'openai',
     name: 'OpenAI',
-    icon: 'Zap',
     defaultBaseUrl: 'https://api.openai.com/v1',
     defaultModels: [
       { id: 'gpt-4-turbo', name: 'GPT-4 Turbo', contextWindow: '128k' },
@@ -32,7 +30,6 @@ const PROVIDERS: ProviderConfig[] = [
   {
     id: 'anthropic',
     name: 'Anthropic',
-    icon: 'Box',
     defaultBaseUrl: 'https://api.anthropic.com/v1',
     defaultModels: [
       { id: 'claude-3-opus', name: 'Claude 3 Opus', contextWindow: '200k' },
@@ -42,7 +39,6 @@ const PROVIDERS: ProviderConfig[] = [
   {
     id: 'google',
     name: 'Google Gemini',
-    icon: 'Server',
     defaultBaseUrl: 'https://generativelanguage.googleapis.com/v1beta',
     defaultModels: [
       { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro', contextWindow: '1M' },
@@ -51,7 +47,6 @@ const PROVIDERS: ProviderConfig[] = [
   {
     id: 'local',
     name: 'Local / Ollama',
-    icon: 'Database',
     defaultBaseUrl: 'http://localhost:11434/v1',
     defaultModels: [
       { id: 'llama3', name: 'Llama 3 (Local)', contextWindow: '8k' },
@@ -60,11 +55,55 @@ const PROVIDERS: ProviderConfig[] = [
   {
     id: 'custom',
     name: 'Custom / Compatible',
-    icon: 'Globe',
     defaultBaseUrl: '',
     defaultModels: []
   }
 ];
+
+const ProviderLogo: React.FC<{ providerId: string; className?: string }> = ({ providerId, className }) => {
+  switch (providerId) {
+    case 'openai':
+      return (
+        <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+          <path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.0462 6.0462 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1195 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.453l-.142.0805L8.704 5.4596a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l3.1028-1.7999 3.1028 1.7999v3.5916l-3.1028 1.8-3.1028-1.8z" />
+        </svg>
+      );
+    case 'anthropic':
+      return (
+        <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" opacity="0.5"/>
+          <path d="M12 6L16.5 16H14.5L13.4 13.5H10.6L9.5 16H7.5L12 6ZM12.9 12L12 9.5L11.1 12H12.9Z" fill="currentColor" />
+        </svg>
+      );
+    case 'google':
+      return (
+        <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+          <path d="M21.363 8.769h-9.827v4.061h6.059a5.558 5.558 0 0 1-2.35 3.666v2.793h3.639c2.235-2.057 3.427-5.23 3.427-8.688 0-.847-.07-1.428-.198-1.832z" className="text-blue-400" fill="currentColor"/>
+          <path d="M11.536 19.33c2.766 0 5.066-.9 6.744-2.433l-3.639-2.793c-1.002.695-2.222 1.056-3.105 1.056-2.454 0-4.524-1.636-5.275-3.836H2.435v2.738c1.722 3.402 5.253 5.268 9.101 5.268z" className="text-green-400" fill="currentColor"/>
+          <path d="M6.261 11.324c-.183-.55-.285-1.139-.285-1.748 0-.609.102-1.198.285-1.748V5.09H2.435C1.037 7.868 1.037 11.282 2.435 14.06l3.826-2.736z" className="text-yellow-400" fill="currentColor"/>
+          <path d="M11.536 4.821c1.94 0 3.327.832 4.092 1.545l2.977-2.924C16.666 1.624 14.301.667 11.536.667c-3.848 0-7.379 1.866-9.101 5.268l3.826 2.736c.751-2.2 2.821-3.85 5.275-3.85z" className="text-red-400" fill="currentColor"/>
+        </svg>
+      );
+    case 'local':
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+          <rect x="2" y="4" width="20" height="16" rx="2" />
+          <path d="M6 10l2 2-2 2" />
+          <path d="M10 14h4" />
+        </svg>
+      );
+    case 'custom':
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+           <circle cx="12" cy="12" r="10"/>
+           <line x1="2" x2="22" y1="12" y2="12"/>
+           <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      );
+    default:
+      return <Cpu className={className} />;
+  }
+};
 
 const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<SettingsTab>('llm');
@@ -218,9 +257,7 @@ const LLMSettings = () => {
         <SectionTitle title="LLM 来源配置" desc="选择预设提供商或配置自定义兼容接口。" />
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {PROVIDERS.map((provider) => {
-             const Icon = (provider.icon === 'Zap' ? Zap : provider.icon === 'Box' ? Box : provider.icon === 'Server' ? Server : provider.icon === 'Globe' ? Globe : Database);
              const isSelected = selectedProvider === provider.id;
-             
              return (
               <button
                 key={provider.id}
@@ -231,8 +268,8 @@ const LLMSettings = () => {
                     : 'bg-slate-800/50 border-white/5 hover:bg-slate-800 hover:border-white/10'
                   }`}
               >
-                <div className={`p-1.5 rounded-lg ${isSelected ? 'bg-cyan-500 text-white' : 'bg-slate-700 text-slate-400'}`}>
-                  <Icon className="w-5 h-5" />
+                <div className={`p-2 rounded-lg ${isSelected ? 'bg-cyan-500 text-white' : 'bg-slate-700 text-slate-400'}`}>
+                  <ProviderLogo providerId={provider.id} className="w-6 h-6" />
                 </div>
                 <span className={`text-xs font-medium text-center ${isSelected ? 'text-white' : 'text-slate-400'}`}>{provider.name}</span>
                 {isSelected && (
