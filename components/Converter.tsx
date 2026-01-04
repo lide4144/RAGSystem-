@@ -13,6 +13,15 @@ const Converter: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [queue, setQueue] = useState<QueueItem[]>([]);
 
+  // Helper to format file size
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
   // Simulation logic for processing queue
   useEffect(() => {
     const processQueue = () => {
@@ -240,7 +249,7 @@ const Converter: React.FC = () => {
                           ></div>
                         </div>
                       ) : (
-                        <p className="text-xs text-slate-500">{(item.file.size / 1024).toFixed(1)} KB</p>
+                        <p className="text-xs text-slate-500">{formatFileSize(item.file.size)}</p>
                       )}
                     </div>
 
